@@ -1,5 +1,3 @@
-## 小小蜜蜂
-@toc
 ## 总述
 - 原始模型的名称：LayoutLMv3(https://github.com/microsoft/unilm/tree/master/layoutlmv3)
 
