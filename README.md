@@ -52,3 +52,6 @@ PyTorch Version (if applicable): 1.11.0<br>
 （2）cast算子在计算float32数据时存在误差，通过round()放缩，规避误差<br>
 
 ![image](https://user-images.githubusercontent.com/49616374/174262579-f7b5157d-ab4c-4d00-af7a-8d568ee69582.png)
+
+### Hackathon 2022 BUG
+issue地址：https://github.com/NVIDIA/TensorRT/issues/2063
