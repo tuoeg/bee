@@ -295,7 +295,7 @@ $ python3 onnx2TRT.py
 当我们直接将整个模型进行int8量化后，精度误差到e-1，达不到工业部署的要求。我们再次将模型拆分成embedding和transformer两个部分，发现embedding校准之后效果是可以的，但是transformer模块是不行的。因此，可以采取int8和fp16混合精度优化，但由于时间关系，最后未能完成。
 
 ## 精度与加速效果  
-为了靠近实际场景，我们设置最小batch为1，最优为4，最大为8的情况下进行评测。
+为了靠近实际场景，我们设置最小batch为1，最优为4，最大为8的情况下进行评测。我们发现在最优的shape上加速最明显。
 <table width="100%" align="center">
     <tbody align="center">
         <tr align="center">
@@ -385,6 +385,7 @@ $ python3 onnx2TRT.py
         </tr>
     </tbody>
 </table>
+
 
 ## Hackathon 2022 BUG
 本次比赛我们总共发现了三个BUG。  
