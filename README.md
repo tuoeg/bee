@@ -19,19 +19,7 @@
 **PyTorch Version (if applicable):** 1.11.0<br>
 
 ## 项目结构
-```
-├── README.md 说明文档  
-├── common    通用方法
-├── data      评估数据和量化数据
-├── fp16      转fp16 trt 相关代码
-├── fp32      转fp32 trt 相关代码
-├── int8      转int8 trt 相关代码
-├── main.py   main
-├── plugins   插件代码
-├── prepare_data.sh  data数据生成
-├── torch_model  模型 推理代码
-└── unilm  模型相关代码
-```
+
 ## 模型转换前准备
 ### 1.配置文件
 根据官方说明进行配置
@@ -382,8 +370,10 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 ```
 $ python3 onnx2TRT.py
 ```
-当我们直接将整个模型进行int8量化后，精度误差到e-1，达不到工业部署的要求。我们再次将模型拆分成embedding和transformer两个部分，发现embedding校准之后效果是可以的，但是transformer模块是不行的。
+当我们直接将整个模型进行int8量化后，精度误差到e-1，达不到工业部署的要求。我们再次将模型拆分成embedding和transformer两个部分，发现embedding校准之后效果是可以的，但是transformer模块是不行的。  
 
+## 精度与加速效果  
+为了靠近实际场景，我们设置最小batch为1，最优为4，最大为8的情况下进行评测。
 <table width="100%" align="center">
     <tbody align="center">
         <tr align="center">
@@ -395,7 +385,7 @@ $ python3 onnx2TRT.py
         </tr>
         <!-- PyTorch -->
         <tr>
-            <td rowspan="4">PyTorch</td>
+            <td rowspan="5">PyTorch</td>
             <td>1</td>
             <td></td>
             <td></td>
@@ -421,7 +411,7 @@ $ python3 onnx2TRT.py
         </tr>
         <!-- TensorRT -->
         <tr>
-            <td rowspan="4">TensorRT(FP32)</td>
+            <td rowspan="5">TensorRT(FP32)</td>
             <td>1</td>
             <td></td>
             <td></td>
@@ -447,7 +437,7 @@ $ python3 onnx2TRT.py
         </tr>
         <!-- TensorRT(FP16) -->
         <tr>
-            <td rowspan="4">TensorRT(FP16)</td>
+            <td rowspan="5">TensorRT(FP16)</td>
             <td>1</td>
             <td></td>
             <td></td>
