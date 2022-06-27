@@ -9,6 +9,5 @@ python3 -m torch.distributed.launch \
   --learning_rate 1e-5 --per_device_train_batch_size 2 --gradient_accumulation_steps 1 \
   --dataloader_num_workers 8
 
-
 mv *.npy ./data
 rm ./test -r
