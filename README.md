@@ -470,3 +470,6 @@ issue地址（PrecisionBUG）：https://github.com/NVIDIA/TensorRT/issues/2091
 issue地址（MessageBUG）：https://github.com/NVIDIA/TensorRT/issues/2073  
 
 issue地址（SettingBUG）：https://github.com/NVIDIA/TensorRT/issues/2080
+
+## 未来工作
+由于没有掌握好时间，一开始我们花费了一部分时间精力准备将transformer块写成一个插件，可惜还在校验中，在之后的工作中，我们将使用transformer插件进行加速。另外我们还想将动态的batchsize指定到一个输入，其他输入的batchsize随着该输入而改变，这样应该可以减小显存和提高动态推理的性能。
