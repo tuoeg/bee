@@ -243,6 +243,8 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 
 ### Hackathon 2022 BUG
 本次比赛我们总共发现了三个BUG。
-issue地址（PrecisionBUG）：https://github.com/NVIDIA/TensorRT/issues/2091
-issue地址（MessageBUG）：https://github.com/NVIDIA/TensorRT/issues/2073
+issue地址（PrecisionBUG）：https://github.com/NVIDIA/TensorRT/issues/2091  
+
+issue地址（MessageBUG）：https://github.com/NVIDIA/TensorRT/issues/2073  
+
 issue地址（SettingBUG）：https://github.com/NVIDIA/TensorRT/issues/2080
