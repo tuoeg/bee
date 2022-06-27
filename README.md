@@ -28,7 +28,7 @@ PyTorch Version (if applicable): 1.11.0<br>
 $ python3 torch2onnx.py -h
 ```
 
-遇到的问题/n
+遇到的问题\n
 （1）opt_version=9不支持，使用opset_version=11
 
 ![image](https://user-images.githubusercontent.com/49616374/174259578-b0606449-3a40-4171-aa32-d2dab8549a93.png)
