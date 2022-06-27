@@ -266,7 +266,8 @@ class LayoutLMv3SelfAttention(nn.Module):
         The smaller atol (e.g., 1e-08), the better.
         '''
         scaled_attention_scores = attention_scores / alpha
-        max_value = scaled_attention_scores.amax(dim=(-1)).unsqueeze(-1)
+        #max_value = scaled_attention_scores.amax(dim=(-1)).unsqueeze(-1)
+        max_value = scaled_attention_scores.max(dim=(-1)).values.unsqueeze(-1)
         # max_value = scaled_attention_scores.amax(dim=(-2, -1)).unsqueeze(-1).unsqueeze(-1)
         new_attention_scores = (scaled_attention_scores - max_value) * alpha
         return nn.Softmax(dim=-1)(new_attention_scores)
