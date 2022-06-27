@@ -281,6 +281,8 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 
 同时选择正确的kernel,将transpose退回FP32精度,得出的结果与fp32一致。这验证了我们的想法，融合节点的tactic选择了最快的一个，但是精度有问题。
 
+此外，我们从融合的节点
+
 
 ## Hackathon 2022 BUG
 本次比赛我们总共发现了三个BUG。  
