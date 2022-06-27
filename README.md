@@ -81,14 +81,14 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 ```
 
 ### 此过程遇到的问题  
-（1）onehot算子不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
+（1）onehot算子不支持。
 
 ![image](https://user-images.githubusercontent.com/49616374/174260371-2d1e6093-3a0f-4808-a76d-9380f6654b7f.png)
+我们根据源码和算子里面的数据判断onehot算子加上后面的matmul算子就是nn.embedding的结构。因此我们将onehot+cast+matmul算子合并成nn.embedding转成的gather算子。如下图
 <img width="130" alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/53067559/175856736-2cbc4e4c-1033-4283-83c8-6e247b22b38b.png"><img width="99" alt="企业微信截图_16563018741884" src="https://user-images.githubusercontent.com/53067559/175856737-8c0f6787-4472-4e01-b169-be63379ee9f5.png">
 
-
 ### 2.算子转换
-（1）onehot算子不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
+（1）onehot算子TRT现在不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
 
 ![image](https://user-images.githubusercontent.com/49616374/174260371-2d1e6093-3a0f-4808-a76d-9380f6654b7f.png)
 
