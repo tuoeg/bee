@@ -248,9 +248,8 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 
 由于，round算子是不能指定位数的，所以最直接的方法就是需要实现一个可指定位数的round插件，但是这样需要花费我们一些时间。最后老师给了一个建议，提出将cast之前的输出乘1e5，再使用round，最后除以1e5还原。我们添加了Mul,Round,Div三个算子，TRT的结果与Torch结果的误差在e-5。ONNX部分如下图所示。  
 
-<div style="text-align: center;">
-    <img src="https://user-images.githubusercontent.com/53067559/175878044-35a5b911-3bec-4919-a7bb-890601d77e4b.png" />
-</div>
+
+<img height="450px" src="https://user-images.githubusercontent.com/53067559/175878044-35a5b911-3bec-4919-a7bb-890601d77e4b.png" />
 
 ### 此过程的优化  
 
