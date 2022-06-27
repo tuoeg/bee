@@ -70,17 +70,18 @@ $ python3 -m onnxsim layoutv3.onnx layoutv3_sim.onnx
 ```
 
 ### 2.ONNX2TensorRT（FP32）
-
+使用trtexec
 ```
 # 动态
-$ python3 torch2onnx.py -h
+$ trtexec --onnx=layout.onnx --minShapes=input_ids:1x512,bbox:1x512x4,images:1x3x224x224 --optShapes=input_ids:6x512,bbox:6x512x4,images:6x3x224x224 --maxShapes=input_ids:6x512,bbox:6x512x4,images:6x3x224x224 --workspace=300000 --saveEngine=layout.plan --verbose --noTF32 --plugins=./LayerNorm.so
+
 
 # 静态
-$ python3 torch2onnx.py -h
+$ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbose --plugins=./LayerNorm.so --noTF32
 ```
 
 ### 此过程遇到的问题  
-（3）onehot算子不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
+（1）onehot算子不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
 
 ![image](https://user-images.githubusercontent.com/49616374/174260371-2d1e6093-3a0f-4808-a76d-9380f6654b7f.png)
 <img width="130" alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/53067559/175856736-2cbc4e4c-1033-4283-83c8-6e247b22b38b.png"><img width="99" alt="企业微信截图_16563018741884" src="https://user-images.githubusercontent.com/53067559/175856737-8c0f6787-4472-4e01-b169-be63379ee9f5.png">
