@@ -70,6 +70,10 @@ $ python3 -m onnxsim layoutv3.onnx layoutv3_sim.onnx
 ```
 我们使用Nsight发现TRT自处理后的结构比和使用onnxsim后的结构好，因此未使用onnxsim。
 
+onnx推理测试
+```
+$ python3 -m onnxsim layoutv3.onnx layoutv3_sim.onnx
+```
 ### 2.LayerNorm算子优化
 ## 遇到的问题
 ### 1.opt_version版本
