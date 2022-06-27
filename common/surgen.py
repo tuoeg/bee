@@ -1,6 +1,7 @@
 import onnx
 import numpy as np
 import onnx_graphsurgeon as gs
+
 def surgen():
     print('start layout surgen ...\n')
     model = onnx.load("./onnx/layout.onnx")
