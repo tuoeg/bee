@@ -159,11 +159,11 @@ $ python3 torch2onnx.py -h
 
 我们加入cast节点进行类型转换和修改节点内部数据类型。下图为其中一个修改点。
 
-<table>
+<table width="100%" align="center">
     <tbody>
-        <tr>
-            <th align="center">BEFORE</th>
-            <th align="center">AFTER</th>
+        <tr align="center">
+            <th>BEFORE</th>
+            <th>AFTER</th>
         </tr>
         <tr style="text-align: center;">
             <td>
@@ -207,7 +207,7 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
   
   我们根据源码和算子里面的数据判断onehot算子加上后面的matmul算子就是nn.embedding的结构。因此我们将onehot+cast+matmul算子合并成nn.embedding转成的gather算子。如下图。
 
-<table width="100%" style="text-align: center;">
+<table width="100%" align="center">
     <tr>
         <th align="center">BEFORE</th>
         <th align="center">AFTER</th>
@@ -309,7 +309,7 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 
  我们实验发现有一个kernel结果是错误的，还有一个kernel的误差精度是在e-3左右。应该是最后的transpose为fp16的精度导致的误差。同时，我们察觉到这可能是水平结构的融合，同时观察到有很多gather算子，进一步确认应该是gather算子的水平融合。于是我们编写了一个gather算子的plugin，替换掉rel_pos，rel_2d_pos分支的gather算子，下图是rel_pos分支的gather算子。
 
-<table width="100%" style="text-align: center;">
+<table width="100%" align="center">
     <tr>
         <th align="center">BEFORE</th>
         <th align="center">AFTER</th>
@@ -335,96 +335,95 @@ $ python3 onnx2TRT.py
 ```
 当我们直接将整个模型进行int8量化后，精度误差到e-1，达不到工业部署的要求。我们再次将模型拆分成embedding和transformer两个部分，发现embedding校准之后效果是可以的，但是transformer模块是不行的。
 
-<table>
-    <tr>
-        <th></th>
-        <th>Batch Size</th>
-        <th>Latency(ms)</th>
-        <th>Through Put</th>
-        <th>Latency Speedup</th>
-    </tr>
-    <!-- PyTorch -->
-    <tr>
-        <td rowspan="4">PyTorch</td>
-        <td>1</td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>2</td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>4</td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>8</td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <!-- TensorRT -->
-    <tr>
-        <td rowspan="4">TensorRT(FP32)</td>
-        <td>1</td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>2</td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>4</td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>8</td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    
-    <!-- TensorRT(FP16) -->
-    <tr>
-        <td rowspan="4">TensorRT(FP16)</td>
-        <td>1</td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>2</td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>4</td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>8</td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
+<table width="100%" align="center">
+    <tbody align="center">
+        <tr align="center">
+            <th></th>
+            <th>Batch Size</th>
+            <th>Latency(ms)</th>
+            <th>Through Put</th>
+            <th>Latency Speedup</th>
+        </tr>
+        <!-- PyTorch -->
+        <tr>
+            <td rowspan="4">PyTorch</td>
+            <td>1</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <!-- TensorRT -->
+        <tr>
+            <td rowspan="4">TensorRT(FP32)</td>
+            <td>1</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <!-- TensorRT(FP16) -->
+        <tr>
+            <td rowspan="4">TensorRT(FP16)</td>
+            <td>1</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
 </table>
-
-<img width="367" alt="1656342527370" src="https://user-images.githubusercontent.com/53067559/175973480-de18ba94-ca22-4a97-afcf-5eddd5e15fff.png">
 
 ## Hackathon 2022 BUG
 本次比赛我们总共发现了三个BUG。  
