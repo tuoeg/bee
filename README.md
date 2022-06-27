@@ -9,14 +9,14 @@
 ![image](https://user-images.githubusercontent.com/49616374/170653429-e9557526-3e14-4c17-b00c-20c7a709fe7b.png)
 
 ## 系统环境
-TensorRT Version: 8.4.1.4<br>
-NVIDIA GPU: NVIDIA A10<br>
-NVIDIA Driver Version: 510.73.08<br>
-CUDA Version：11.6<br>
-CUDNN Version: 8.4<br>
-Operating System: Ubuntu 20.04.4 LTS<br>
-Python Version (if applicable): 3.8.10<br>
-PyTorch Version (if applicable): 1.11.0<br>
+**TensorRT Version:** 8.4.1.4<br>
+**NVIDIA GPU:** NVIDIA A10<br>
+**NVIDIA Driver Version:** 510.73.08<br>
+**CUDA Version**：11.6<br>
+**CUDNN Version:** 8.4<br>
+**Operating System:** Ubuntu 20.04.4 LTS<br>
+**Python Version (if applicable):** 3.8.10<br>
+**PyTorch Version (if applicable):** 1.11.0<br>
 
 ## 项目结构
 
