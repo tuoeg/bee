@@ -18,8 +18,6 @@
 **Python Version (if applicable):** 3.8.10<br>
 **PyTorch Version (if applicable):** 1.11.0<br>
 
-## 项目结构
-
 ## 模型转换前准备
 ### 1.配置文件
 根据官方说明进行配置
