@@ -252,11 +252,36 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 
 我们尝试使用polygrahy去找精度出问题的layer，但依然发生了之前的问题，破坏了Myelin的优化融合，失败。没有办法，只能再次使用二分法去查找。我们将layoutlmv3分为两部分，第一部分是embedding模块，第二部分是transformer模块。embedding模块的输入为input_ids,bbox,images,输出为rel_pos，rel_2d_pos和hidden_states。transformer模块的输入为rel_pos，rel_2d_pos，hidden_states和attention_mask,输出为预测的分类结果。
   
-  经过检测，在FP16精度下，发现embedding模块的rel_pos，rel_2d_pos输出部分值为0，hidden_states输出基本符合fp16的精度误差。然后再次细分，发现只输出rel_pos，rel_2d_pos时，结果精度没问题，但是加入hidden_states分支，影响了rel_pos，rel_2d_pos输出精度。
+  经过检测，在FP16精度下，发现embedding模块的rel_pos，rel_2d_pos输出部分值为0，hidden_states输出基本符合fp16的精度误差。然后再次细分，发现只输出rel_pos，rel_2d_pos时，结果精度没问题，但是加入hidden_states分支，影响了rel_pos，rel_2d_pos输出精度。再对hidden_states分支进行层层拆分，最后定位成以下问题：
   
  <img width="572" alt="8109eea10c993f5a42060d8070f27cf" src="https://user-images.githubusercontent.com/53067559/175931815-2c400d9a-a165-4c1a-b354-1af2376c88fd.png">
 
+ 阻断融合，我们尝试了回退两个分支的连接点ADD算子的精度为fp32，修改不成功（TRT的设置BUG），失败；尝试了添加输出层，还是失败，无法阻断融合；最后只能写了两个Matmul算子让两个分支的输出乘以对角为1的矩阵，这次终于将ADD拆分出来，但是两个分支依旧融合成一个外部节点，还是失败了。
  
+ 我们想到FP32下的engine是OK的，于是我们查看了FP32下的节点融合策略和FP16下的节点融合策略。发现融合策略是一致的，那么真相只有一个！
+ ```
+ Layer   2:{ForeignNode[layoutlmv3.embeddings.word_embeddings.weight...Add_65]}
+    Input [ 0]:[(6, 512, 4), (6, 512, 4), (6, 512, 4)],DataType.INT32,(2048, 4, 1),TensorFormat.LINEAR
+    Input [ 1]:[(512,), (512,), (512,)],DataType.INT32,(1,),TensorFormat.LINEAR
+    Input [ 2]:[(197,), (197,), (197,)],DataType.INT32,(1,),TensorFormat.LINEAR
+    Output[ 0]:[(6, 512), (6, 512), (6, 512)],DataType.FLOAT,(512, 1),TensorFormat.LINEAR
+    Output[ 1]:[(6, 512), (6, 512), (6, 512)],DataType.FLOAT,(512, 1),TensorFormat.LINEAR
+    Output[ 2]:[(6, 709, 709), (6, 709, 709), (6, 709, 709)],DataType.INT32,(502681, 709, 1),TensorFormat.LINEAR
+    Output[ 3]:[(6, 709, 709), (6, 709, 709), (6, 709, 709)],DataType.INT32,(502681, 709, 1),TensorFormat.LINEAR
+    Output[ 4]:[(6, 709, 709), (6, 709, 709), (6, 709, 709)],DataType.INT32,(502681, 709, 1),TensorFormat.LINEAR
+    algorithm:[implementation:2147483683,tactic:0,timing:0.000000ms,workspace:0MB]
+ ```
+ 没错，恭喜你猜对了！确实是kernel选择的问题，我们将这个节点的tactic打印出来，发现有两个。
+ 
+ <img width="250" alt="企业微信截图_16563361759275" src="https://user-images.githubusercontent.com/53067559/175952213-37da4d70-58e7-4cf9-abe7-9bd344421cde.png">
+ 
+ 我们实验发现有一个kernel结果是错误的，还有一个kernel的误差精度是在e-3左右。应该是最后的transpose为fp16的精度导致的误差。同时，我们察觉到这可能是水平结构的融合，同时观察到有很多gather算子，进一步确认应该是gather算子的水平融合。于是我们编写了一个gather算子的plugin，替换掉rel_pos，rel_2d_pos分支的gather算子，下图是rel_pos分支的gather算子。
+ 
+ <img width="176" alt="企业微信截图_16563335478797" src="https://user-images.githubusercontent.com/53067559/175944251-33ccdb0d-8eda-453e-9a5c-20d984f16866.png"><img width="151" alt="企业微信截图_16563337066001" src="https://user-images.githubusercontent.com/53067559/175944261-0d9016ee-4848-47ab-a6ec-83e09791fd8f.png">
+
+同时选择正确的kernel,将transpose退回FP32精度,得出的结果与fp32一致。这验证了我们的想法，融合节点的tactic选择了最快的一个，但是精度有问题。
+
+
 ## Hackathon 2022 BUG
 本次比赛我们总共发现了三个BUG。  
 
