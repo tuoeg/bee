@@ -89,16 +89,12 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
   
   <img width="130" alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/53067559/175856736-2cbc4e4c-1033-4283-83c8-6e247b22b38b.png"><img width="99" alt="企业微信截图_16563018741884" src="https://user-images.githubusercontent.com/53067559/175856737-8c0f6787-4472-4e01-b169-be63379ee9f5.png">
 
-### 2.算子转换
-（1）onehot算子TRT现在不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
 
-![image](https://user-images.githubusercontent.com/49616374/174260371-2d1e6093-3a0f-4808-a76d-9380f6654b7f.png)
+（2）出现精度误差。
+![image](https://user-images.githubusercontent.com/49616374/174260801-f0c100b5-84db-4bc2-916a-dfa2ca21e481.png)<br>
+转换后的TRT模型精度出现较大误差，但是在之前生成的ONNX模型上是符合e-5的误差的。我们先使用了polygrahy工具尝试查找精度出问题的layer。
 
-（2）添加cast进行数据类型转换
-
-![image](https://user-images.githubusercontent.com/49616374/174260502-3a511afc-2b91-49f4-adc2-92b607f2ec43.png)
-### 3.精度误差优化
-（1）原始数据集存在int64类型导致精度损失；编写小型torch网络并生成trt网络，输入int64类型数据进行测试，发现onnx推理与trt推理存在误差较大，onnx推理与torch推理几乎无误差；提出issue:https://github.com/NVIDIA/TensorRT/issues/2037， 获悉tensorrt默认将int64类型数据转成int32类型数据<br>
+因此我们使用了onnx_graphsurgeon裁剪出了小型torch网络并生成trt网络，输入int64类型数据进行测试，发现onnx推理与trt推理存在误差较大，onnx推理与torch推理几乎无误差；提出issue:https://github.com/NVIDIA/TensorRT/issues/2037， 获悉tensorrt默认将int64类型数据转成int32类型数据<br>
 
 ![image](https://user-images.githubusercontent.com/49616374/174260801-f0c100b5-84db-4bc2-916a-dfa2ca21e481.png)<br>
 （2）cast算子在计算float32数据时存在误差，通过round()放缩，规避误差<br>
