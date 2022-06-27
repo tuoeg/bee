@@ -32,7 +32,7 @@ $ python3 torch2onnx.py -h
 $ python3 torch2onnx.py -h
 ```
 
-此过程遇到的问题      
+### 此过程遇到的问题      
 
 （1）opt_version=9不支持。
 
@@ -56,13 +56,7 @@ $ python3 torch2onnx.py -h
 
 <img width="361" alt="企业微信截图_16563049911238" src="https://user-images.githubusercontent.com/53067559/175861628-a1186389-0ac6-416f-98a2-44efa4862df9.png"><img width="348" alt="企业微信截图_1656305009958" src="https://user-images.githubusercontent.com/53067559/175861708-19ad1dcf-d09f-43a3-bee6-0d8c7ea8d1fc.png">
   
-
-（3）onehot算子不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
-
-![image](https://user-images.githubusercontent.com/49616374/174260371-2d1e6093-3a0f-4808-a76d-9380f6654b7f.png)
-<img width="130" alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/53067559/175856736-2cbc4e4c-1033-4283-83c8-6e247b22b38b.png"><img width="99" alt="企业微信截图_16563018741884" src="https://user-images.githubusercontent.com/53067559/175856737-8c0f6787-4472-4e01-b169-be63379ee9f5.png">
-
-simplify方法  
+### simplify方法  
 
 ```
 # 静态
@@ -74,9 +68,22 @@ onnx推理测试
 ```
 $ python3 -m onnxsim layoutv3.onnx layoutv3_sim.onnx
 ```
-### 2.LayerNorm算子优化
-## 遇到的问题
-### 1.opt_version版本
+
+### 2.ONNX2TensorRT（FP32）
+
+```
+# 动态
+$ python3 torch2onnx.py -h
+
+# 静态
+$ python3 torch2onnx.py -h
+```
+
+### 此过程遇到的问题  
+（3）onehot算子不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
+
+![image](https://user-images.githubusercontent.com/49616374/174260371-2d1e6093-3a0f-4808-a76d-9380f6654b7f.png)
+<img width="130" alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/53067559/175856736-2cbc4e4c-1033-4283-83c8-6e247b22b38b.png"><img width="99" alt="企业微信截图_16563018741884" src="https://user-images.githubusercontent.com/53067559/175856737-8c0f6787-4472-4e01-b169-be63379ee9f5.png">
 
 
 ### 2.算子转换
