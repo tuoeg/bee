@@ -216,18 +216,27 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 
 ![image](https://user-images.githubusercontent.com/49616374/174262579-f7b5157d-ab4c-4d00-af7a-8d568ee69582.png)
 
-由于，round算子是不能指定位数的，所以最直接的方法就是需要实现一个可指定位数的round插件，但是这样需要花费我们一些时间。最后老师给了一个建议，提出将cast之前的输出乘1e5，再使用round，最后除以1e5还原。ONNX如下图。  
+由于，round算子是不能指定位数的，所以最直接的方法就是需要实现一个可指定位数的round插件，但是这样需要花费我们一些时间。最后老师给了一个建议，提出将cast之前的输出乘1e5，再使用round，最后除以1e5还原。我们添加了Mul,Round,Div三个算子，TRT的结果与Torch结果的误差在e-5。ONNX部分如下图所示。  
 
 <img width="113" alt="企业微信截图_16563129152721" src="https://user-images.githubusercontent.com/53067559/175878044-35a5b911-3bec-4919-a7bb-890601d77e4b.png"> 
 
-最后成功解决这个精度问题。
+
 
 ### 此过程的优化  
 
 使用Nsight，发现
 
 ### 2.ONNX2TensorRT（FP16）
-使用trtexec
+```
+# 动态
+$ python3 onnx2TRT.py
+
+
+# 静态
+$ python3 onnx2TRT.py
+```
+
+使用trtexec（误差极大）
 ```
 # 动态
 $ trtexec --onnx=layout.onnx --minShapes=input_ids:1x512,bbox:1x512x4,images:1x3x224x224 --optShapes=input_ids:6x512,bbox:6x512x4,images:6x3x224x224 --maxShapes=input_ids:6x512,bbox:6x512x4,images:6x3x224x224 --workspace=300000 --saveEngine=layout.plan --verbose --fp16 --plugins=./LayerNorm.so
@@ -236,9 +245,8 @@ $ trtexec --onnx=layout.onnx --minShapes=input_ids:1x512,bbox:1x512x4,images:1x3
 # 静态
 $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbose --plugins=./LayerNorm.so --fp16
 ```
-这样转出来的engine精度误差极大
 ### 此过程遇到的问题  
-（1）精度误差极大。
+（1）我们直接使用trtexec去转FP16时，发现结果的精度误差极大。（TRT的精度BUG）
 <img width="248" alt="企业微信截图_16563231808083" src="https://user-images.githubusercontent.com/53067559/175913159-17aeaa8a-3187-4067-a859-2e1f544ca792.png">
 
 ### Hackathon 2022 BUG
