@@ -111,7 +111,7 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 
 由于，round算子是不能指定位数的，所以最直接的方法就是需要实现一个可指定位数的round插件，但是这样需要花费我们一些时间。最后老师给了一个建议，提出将cast之前的输出乘1e5，再使用round，最后除以1e5还原。ONNX如下图。  
 
-<img width="152" alt="企业微信截图_16563128136069" src="https://user-images.githubusercontent.com/53067559/175877756-c415a380-9985-4ec5-992c-190c5dafb909.png">  
+<img width="113" alt="企业微信截图_16563129152721" src="https://user-images.githubusercontent.com/53067559/175878044-35a5b911-3bec-4919-a7bb-890601d77e4b.png"> 
 
 最后成功解决这个精度问题。
 
