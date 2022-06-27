@@ -343,6 +343,7 @@ $ python3 onnx2TRT.py
         <th>Through Put</th>
         <th>Latency Speedup</th>
     </tr>
+    <!-- PyTorch -->
     <tr>
         <td rowspan="4">PyTorch</td>
         <td>1</td>
@@ -351,21 +352,71 @@ $ python3 onnx2TRT.py
         <td></td>
     </tr>
     <tr>
-        <td></td>
         <td>2</td>
         <td></td>
         <td></td>
         <td></td>
     </tr>
     <tr>
-        <td></td>
         <td>4</td>
         <td></td>
         <td></td>
         <td></td>
     </tr>
     <tr>
+        <td>8</td>
         <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <!-- TensorRT -->
+    <tr>
+        <td rowspan="4">TensorRT(FP32)</td>
+        <td>1</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>8</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    
+    <!-- TensorRT(FP16) -->
+    <tr>
+        <td rowspan="4">TensorRT(FP16)</td>
+        <td>1</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
         <td>8</td>
         <td></td>
         <td></td>
