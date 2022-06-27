@@ -238,7 +238,11 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 ```
 这样转出来的engine精度误差极大
 ### 此过程遇到的问题  
-（1）onehot算子不支持。
+（1）精度误差极大。
+<img width="248" alt="企业微信截图_16563231808083" src="https://user-images.githubusercontent.com/53067559/175913159-17aeaa8a-3187-4067-a859-2e1f544ca792.png">
 
 ### Hackathon 2022 BUG
-issue地址：https://github.com/NVIDIA/TensorRT/issues/2063
+本次比赛我们总共发现了三个BUG。
+issue地址（PrecisionBUG）：https://github.com/NVIDIA/TensorRT/issues/2091
+issue地址（MessageBUG）：https://github.com/NVIDIA/TensorRT/issues/2073
+issue地址（SettingBUG）：https://github.com/NVIDIA/TensorRT/issues/2080
