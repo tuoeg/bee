@@ -111,14 +111,26 @@ python -m torch.distributed.launch \
   --dataloader_num_workers 8
 ```
 ### 3.源码改动
-由于onnx无法像torch一样指定输入，因此需要将LayoutLMv3ForTokenClassification类中的forward函数入参进行顺序修改。如下图。
-
-<img width="142" alt="企业微信截图_16563149198677" src="https://user-images.githubusercontent.com/53067559/175883908-589f9128-4c5f-498a-8247-57ce2b4a736d.png"><img width="144" alt="企业微信截图_16563149041965" src="https://user-images.githubusercontent.com/53067559/175883883-a38ee67f-2ed3-4a15-9009-661a6c3979d7.png">
-
-
+由于onnx无法像torch一样指定输入，因此需要将LayoutLMv3ForTokenClassification类中的forward函数入参进行顺序修改，将四个输入input_ids、bbox、attention_mask和images的顺序放在最上面。
+```
+def forward(
+        self,
+        input_ids=None,
+        bbox=None,
+        attention_mask=None,
+        images=None,
+        token_type_ids=None,
+        position_ids=None,
+        head_mask=None,
+        inputs_embeds=None,
+        labels=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        return_dict=None,
+    ):
+```
 ## 模型转换以及优化
 ### 1.torch to onnx
-
 ```
 # 动态
 $ python3 torch2onnx.py -h
