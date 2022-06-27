@@ -344,33 +344,33 @@ $ python3 onnx2TRT.py
         <th>Latency Speedup</th>
     </tr>
     <tr>
-        <td rowspan="3">PyTorch</td>
+        <td rowspan="4">PyTorch</td>
         <td>1</td>
         <td></td>
         <td></td>
         <td></td>
-    <tr>
+    </tr>
     <tr>
         <td></td>
         <td>2</td>
         <td></td>
         <td></td>
         <td></td>
-    <tr>
+    </tr>
     <tr>
         <td></td>
         <td>4</td>
         <td></td>
         <td></td>
         <td></td>
-    <tr>
+    </tr>
     <tr>
         <td></td>
         <td>8</td>
         <td></td>
         <td></td>
         <td></td>
-    <tr>
+    </tr>
 </table>
 
 <img width="367" alt="1656342527370" src="https://user-images.githubusercontent.com/53067559/175973480-de18ba94-ca22-4a97-afcf-5eddd5e15fff.png">
