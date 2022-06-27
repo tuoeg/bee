@@ -159,20 +159,22 @@ $ python3 torch2onnx.py -h
 
 我们加入cast节点进行类型转换和修改节点内部数据类型。下图为其中一个修改点。
 
-<table width="100%" style="text-align: center;">
-    <tr>
+<table style="display: table!important; width:100%!important">
+    <tbody><tr>
         <th align="center">BEFORE</th>
         <th align="center">AFTER</th>
     </tr>
-    <tr>
+    <tr style="
+    text-align: center;
+">
         <td>
-            <img height="300px" alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/53067559/175861628-a1186389-0ac6-416f-98a2-44efa4862df9.png">
+            <a target="_blank" rel="noopener noreferrer" href="https://user-images.githubusercontent.com/53067559/175861628-a1186389-0ac6-416f-98a2-44efa4862df9.png"><img height="300px" alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/53067559/175861628-a1186389-0ac6-416f-98a2-44efa4862df9.png" style="max-width: 100%;"></a>
         </td>
         <td>
-            <img height="300px" alt="企业微信截图_16563018741884" src="https://user-images.githubusercontent.com/53067559/175861708-19ad1dcf-d09f-43a3-bee6-0d8c7ea8d1fc.png">
+            <a target="_blank" rel="noopener noreferrer" href="https://user-images.githubusercontent.com/53067559/175861708-19ad1dcf-d09f-43a3-bee6-0d8c7ea8d1fc.png"><img height="300px" alt="企业微信截图_16563018741884" src="https://user-images.githubusercontent.com/53067559/175861708-19ad1dcf-d09f-43a3-bee6-0d8c7ea8d1fc.png" style="max-width: 100%;"></a>
         </td>
     </tr>
-</table>
+</tbody></table>
 
 
 ### simplify方法  
