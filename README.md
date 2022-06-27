@@ -19,6 +19,17 @@
 **PyTorch Version (if applicable):** 1.11.0<br>
 
 ## 项目结构
+├── README.md
+├── common
+├── data
+├── fp16
+├── fp32
+├── int8
+├── main.py
+├── plugins
+├── prepare_data.sh
+├── torch_model
+└── unilm
 
 ## 模型转换前准备
 ### 1.配置文件
