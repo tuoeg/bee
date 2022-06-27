@@ -1,4 +1,5 @@
 from datasets import load_metric
+from .data_loader import DataLoader
 import time
 import numpy as np
 import torch
@@ -16,6 +17,7 @@ class BaseM(object):
         self.runtime = trt.Runtime(G_LOGGER)
     
     def torch_matric(self):
+        torch.cuda.empty_cache()
         predictions = np.ones((self.total_num,709),dtype=np.int32)
         for i, ii in self.generate_batch(self.total_num, 4):
             attention_mask = self.data_loader.attention_mask[i:ii]
@@ -69,15 +71,16 @@ class BaseM(object):
 
         for i_s, ii_e in self.generate_batch(self.total_num, 2):
             print(i_s, ii_e)
+            torch.cuda.empty_cache()
             with open(file, "rb") as f:
                 engine = self.runtime.deserialize_cuda_engine(f.read())
 
         
             context = engine.create_execution_context()
-            context.set_binding_shape(0,[2,512])
-            context.set_binding_shape(1,[2,512,4])
-            context.set_binding_shape(2,[2,3, 224, 224])
-            context.set_binding_shape(3,[2,709])
+            context.set_binding_shape(0,[ii_e - i_s,512])
+            context.set_binding_shape(1,[ii_e - i_s,512,4])
+            context.set_binding_shape(2,[ii_e - i_s,3, 224, 224])
+            context.set_binding_shape(3,[ii_e - i_s,709])
 
             print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
     
@@ -88,6 +91,7 @@ class BaseM(object):
 
 
             bufferH = []
+            self.data_loader = DataLoader()
 
             # input_id
             bufferH.append( self.data_loader.input_ids[i_s:ii_e])
@@ -145,7 +149,7 @@ class BaseM(object):
         self.f1 = results['overall_f1']
 
     def infer_batch(self, file, batch):
-        
+        torch.cuda.empty_cache()
         with open(file, "rb") as f:
             engine = self.runtime.deserialize_cuda_engine(f.read())
 

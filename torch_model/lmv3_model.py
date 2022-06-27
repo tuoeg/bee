@@ -54,7 +54,7 @@ class Lmv3Model(BaseM):
         self.m.eval()
         self.data_loader = DataLoader()
 
-        self.batch_list = [1, 2, 4, 8]
+        self.batch_list = [1, 2, 4, 8, 1, 2, 4, 8]
         self.total_num = 54
         self.time_list = []
     def generate_batch(self,length, n):
@@ -81,44 +81,9 @@ class Lmv3Model(BaseM):
                 end_time = time.time()
                 self.time_list.append((end_time - start_time)*1000)
 
-        # predictions = np.ones((self.total_num,709),dtype=np.int32)
-        # for i, ii in self.generate_batch(self.total_num, 4):
-        #     attention_mask = self.data_loader.attention_mask[i:ii]
-        #     bbox = self.data_loader.bbox[i:ii]
-        #     images = self.data_loader.images[i:ii]
-        #     input_ids = self.data_loader.input_ids[i:ii]
-            
-        #     attention_mask = torch.from_numpy(attention_mask).to(self.device)
-        #     bbox = torch.from_numpy(bbox).to(self.device)
-        #     images = torch.from_numpy(images).to(self.device)
-        #     input_ids = torch.from_numpy(input_ids).to(self.device)
-        #     with torch.no_grad():
-        #         pre = self.m(input_ids, bbox, images, attention_mask)
-            
-        #     pred = np.argmax(pre[0].cpu().detach().numpy(), axis=2)
-        #     predictions[i:ii,:] = pred
-
-
-        # label_list = ['O', 'B-HEADER', 'I-HEADER', 'B-QUESTION', 'I-QUESTION', 'B-ANSWER', 'I-ANSWER']
-        # labels = np.load('./data/eval_labels.npy').astype(np.int32)
-
-        # true_predictions = [
-        #     [label_list[p] for (p, l) in zip(prediction, label) if l != -100]
-        #     for prediction, label in zip(predictions, labels)
-        # ]
-        # true_labels = [
-        #     [label_list[l] for (p, l) in zip(prediction, label) if l != -100]
-        #     for prediction, label in zip(predictions, labels)
-        # ]
-        # results = metric.compute(predictions=true_predictions, references=true_labels)
-        # print(results["overall_precision"])
-        # print(results["overall_recall"])
-        # print(results["overall_f1"])
-
-        # self.precision = results['overall_precision']
-        # self.recall = results['overall_recall']
-        # self.f1 = results['overall_f1']
-        self.matric()
+            torch.cuda.empty_cache()
+        self.torch_matric()
+        self.print()
     def onnx(self):
         onnx_f = './onnx/original.onnx'
         self.data_loader = DataLoader()
