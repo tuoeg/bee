@@ -25,8 +25,17 @@ PyTorch Version (if applicable): 1.11.0<br>
 ### 1.torch to onnx
 
 ```
-$ python3 detr_pth2onnx.py -h
+$ python3 torch2onnx.py -h
 ```
+## 遇到的问题
+### 1.opt_version版本
+（1）opt_version=9不支持，使用opset_version=11
+
+![image](https://user-images.githubusercontent.com/49616374/174259578-b0606449-3a40-4171-aa32-d2dab8549a93.png)
+
+（2）optset_version 11不支持amax操作，修改torch网络中amax函数为max函数
+
+![image](https://user-images.githubusercontent.com/49616374/174259606-c2d4ea64-4125-42cf-82b8-657e660c54ed.png)
 ### 2.LayerNorm算子优化
 ## 遇到的问题
 ### 1.opt_version版本
