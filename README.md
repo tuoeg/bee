@@ -159,7 +159,7 @@ $ python3 torch2onnx.py -h
 
 我们加入cast节点进行类型转换和修改节点内部数据类型。下图为其中一个修改点。
 
-<table style="display: table!important; width:100%!important">
+<table style="display: table !important; width:100% !important;">
     <tbody><tr>
         <th align="center">BEFORE</th>
         <th align="center">AFTER</th>
