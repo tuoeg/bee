@@ -52,6 +52,11 @@ $ python3 torch2onnx.py -h
 
 ![image](https://user-images.githubusercontent.com/49616374/174260502-3a511afc-2b91-49f4-adc2-92b607f2ec43.png)
 
+（3）onehot算子不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
+
+![image](https://user-images.githubusercontent.com/49616374/174260371-2d1e6093-3a0f-4808-a76d-9380f6654b7f.png)
+
+
 ### 2.LayerNorm算子优化
 ## 遇到的问题
 ### 1.opt_version版本
