@@ -44,13 +44,11 @@ $ python3 torch2onnx.py -h
 
 <img width="551" alt="企业微信截图_16562990601571" src="https://user-images.githubusercontent.com/53067559/175852416-f750cd2c-d357-485a-919c-86d640eb56f0.png">
 
-（3）onehot算子不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
-
-![image](https://user-images.githubusercontent.com/49616374/174260371-2d1e6093-3a0f-4808-a76d-9380f6654b7f.png)
-
-（4）添加cast进行数据类型转换
+（3）一些算子不支持多种类型进行操作，或者不支持int类型进行操作。
 
 ![image](https://user-images.githubusercontent.com/49616374/174260502-3a511afc-2b91-49f4-adc2-92b607f2ec43.png)
+
+我们加入cast节点进行类型转换和修改节点内部数据类型。
 
 （3）onehot算子不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
 
