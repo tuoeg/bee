@@ -268,9 +268,20 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 ### 此过程的优化  
 
 使用Nsight，发现
-<img width="198" alt="企业微信截图_16563447766568" src="https://user-images.githubusercontent.com/53067559/175980793-b5550b97-08aa-463a-a6e1-4bbccc855f76.png">
-<img width="86" alt="企业微信截图_16563448939376" src="https://user-images.githubusercontent.com/53067559/175980898-11dcbacd-91c7-4045-8eb9-ddfed7029169.png">
-
+<table width="100%" align="center">
+    <tr>
+        <th align="center">BEFORE</th>
+        <th align="center">AFTER</th>
+    </tr>
+    <tr>
+        <td>
+            <img height="450px" alt="企业微信截图_16563337066001" src="https://user-images.githubusercontent.com/53067559/175980793-b5550b97-08aa-463a-a6e1-4bbccc855f76.png">
+        </td>
+        <td>
+            <img height="90px" alt="企业微信截图_16563337066001" src="https://user-images.githubusercontent.com/53067559/175980898-11dcbacd-91c7-4045-8eb9-ddfed7029169.png">
+        </td>
+    </tr>
+</table>
 
 ### 2.ONNX2TensorRT（FP16）
 ```
