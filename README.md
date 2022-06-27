@@ -385,7 +385,7 @@ $ python3 onnx2TRT.py
         </tr>
         <!-- PyTorch -->
         <tr>
-            <td rowspan="5">PyTorch</td>
+            <td rowspan="4">PyTorch</td>
             <td>1</td>
             <td></td>
             <td></td>
@@ -411,7 +411,7 @@ $ python3 onnx2TRT.py
         </tr>
         <!-- TensorRT -->
         <tr>
-            <td rowspan="5">TensorRT(FP32)</td>
+            <td rowspan="4">TensorRT(FP32)</td>
             <td>1</td>
             <td></td>
             <td></td>
@@ -437,7 +437,33 @@ $ python3 onnx2TRT.py
         </tr>
         <!-- TensorRT(FP16) -->
         <tr>
-            <td rowspan="5">TensorRT(FP16)</td>
+            <td rowspan="4">TensorRT(FP16)</td>
+            <td>1</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <!-- INT8 -->
+        <tr>
+            <td rowspan="4">INT8</td>
             <td>1</td>
             <td></td>
             <td></td>
