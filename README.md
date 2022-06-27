@@ -101,7 +101,11 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 
 <img width="311" alt="企业微信截图_16563117525147" src="https://user-images.githubusercontent.com/53067559/175874907-d65fb57c-b868-4c3f-b282-e7d0c7286027.png">  
 
-因此我们使用二分法排查精度出问题的layer。经过一段时间的努力，使用了onnx_graphsurgeon裁剪出了有问题的小型网络并生成trt网络，输入int64类型数据进行测试，发现onnx推理与trt推理存在误差较大，onnx推理与torch推理几乎无误差；提出issue:https://github.com/NVIDIA/TensorRT/issues/2037， 获悉tensorrt默认将int64类型数据转成int32类型数据<br>
+因此我们使用二分法排查精度出问题的layer。经过一段时间的努力，使用了onnx_graphsurgeon定位并裁剪出了有问题的小型网络并生成trt网络。  
+
+<img width="101" alt="33afa27485683114094fafa16381c2b" src="https://user-images.githubusercontent.com/53067559/175875678-bffd11e4-477f-4265-a487-ca0a1dbb256c.png">  
+
+如上图，我们发现输出roi的精度符合要求，但是经过cast算子之后的out发生较大的误差。我们将两个输出打印出来，发现是float转int发生的误差。  
 
 ![image](https://user-images.githubusercontent.com/49616374/174260801-f0c100b5-84db-4bc2-916a-dfa2ca21e481.png)<br>
 （2）cast算子在计算float32数据时存在误差，通过round()放缩，规避误差<br>
