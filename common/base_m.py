@@ -9,7 +9,6 @@ from cuda import cudart
 
 # import pycuda.driver as cuda
 
-
 G_LOGGER = trt.Logger(trt.Logger.ERROR)
 metric = load_metric("seqeval")
 class BaseM(object):
