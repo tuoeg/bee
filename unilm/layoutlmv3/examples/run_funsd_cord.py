@@ -462,6 +462,60 @@ def main():
         compute_metrics=compute_metrics,
     )
 
+    # Save Eval Data
+    eval_labels = np.ones((54, 709),dtype=np.int32)
+    eval_input_ids = np.ones((54, 512),dtype=np.int32)
+    eval_bboxes = np.zeros((54,512,4),dtype=np.int32)
+    eval_images = np.ones((54,3,224,224),dtype=np.float32)
+    eval_attention_masks = np.ones((54,709),dtype=np.int32)
+
+    for step, eval_inputs in enumerate(eval_dataset):
+        # labels
+        eval_labels[step,:] = eval_labels[step,:]*(-100)
+        eval_labels[step, :len(eval_inputs['attention_mask'])] = np.array(eval_inputs['labels'])
+        # input_ids
+        eval_input_ids[step, :len(eval_inputs['attention_mask'])] = np.array(eval_inputs['input_ids'])
+        # bboxes
+        eval_bboxes[step, :len(eval_inputs['attention_mask']),:] = np.array(eval_inputs['bbox'])
+        # images
+        eval_images[step,:,:,:] = np.array(eval_inputs['images'])
+        # attention_masks
+        eval_attention_masks[step,len(eval_inputs['attention_mask']):512] = 0
+
+    eval_path = '../../../data/eval'
+    np.save(os.path.join(eval_path, 'labels.npy'), eval_labels)
+    np.save(os.path.join(eval_path, 'input_ids.npy'), eval_input_ids)
+    np.save(os.path.join(eval_path,'bbox.npy'), eval_bboxes)
+    np.save(os.path.join(eval_path,'images.npy'), eval_images)
+    np.save(os.path.join(eval_path,'attention_mask.npy'), eval_attention_masks)
+
+    # Save Train Data
+    train_labels = np.ones((150, 709), dtype=np.int32)
+    train_input_ids = np.ones((150, 512), dtype=np.int32)
+    train_bboxes = np.zeros((150, 512, 4), dtype=np.int32)
+    train_images = np.ones((150, 3, 224, 224), dtype=np.float32)
+    train_attention_masks = np.ones((150, 709), dtype=np.int32)
+    for step, train_inputs in enumerate(train_dataset):
+        # labels
+        train_labels[step, :] = train_labels[step, :] * (-100)
+        train_labels[step, :len(train_inputs['attention_mask'])] = np.array(train_inputs['labels'])
+        # input_ids
+        train_input_ids[step, :len(train_inputs['attention_mask'])] = np.array(train_inputs['input_ids'])
+        # bbox
+        train_bboxes[step, :len(train_inputs['attention_mask']), :] = np.array(train_inputs['bbox'])
+        # images
+        train_images[step, :, :, :] = np.array(train_inputs['images'])
+        # attention_mask
+        train_attention_masks[step, len(train_inputs['attention_mask']):512] = 0
+    
+    train_path = '../../../data/train'
+    np.save(os.path.join(train_path,'labels.npy'), train_labels)
+    np.save(os.path.join(train_path,'input_ids.npy'), train_input_ids)
+    np.save(os.path.join(train_path,'bbox.npy'), train_bboxes)
+    np.save(os.path.join(train_path,'images.npy'), train_images)
+    np.save(os.path.join(train_path,'attention_mask.npy'), train_attention_masks)
+
+
     # Training
     if training_args.do_train:
         checkpoint = last_checkpoint if last_checkpoint else None
