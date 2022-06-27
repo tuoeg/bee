@@ -30,13 +30,19 @@ $ python3 torch2onnx.py -h
 
 此过程遇到的问题      
 
-（1）opt_version=9不支持。因此我们将opset_version设为11。
+（1）opt_version=9不支持。
 
 ![image](https://user-images.githubusercontent.com/49616374/174259578-b0606449-3a40-4171-aa32-d2dab8549a93.png)
 
-（2）optset_version 11不支持amax操作。因此我们修改torch网络中amax函数为max函数
+我们将opset_version设为11跳过了这个问题。
+
+（2）optset_version 11不支持amax操作。
 
 ![image](https://user-images.githubusercontent.com/49616374/174259606-c2d4ea64-4125-42cf-82b8-657e660c54ed.png)
+
+我们修改torch网络中amax函数为max函数，跳过了这个问题。
+
+<img width="551" alt="企业微信截图_16562990601571" src="https://user-images.githubusercontent.com/53067559/175852416-f750cd2c-d357-485a-919c-86d640eb56f0.png">
 
 （3）onehot算子不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
 
