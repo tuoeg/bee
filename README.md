@@ -19,28 +19,19 @@
 **PyTorch Version (if applicable):** 1.11.0<br>
 
 ## 项目结构
-├── README.md  
-
-├── common  
-
-├── data  
-
-├── fp16  
-
-├── fp32  
-
-├── int8  
-
-├── main.py  
-
-├── plugins  
-
-├── prepare_data.sh  
-
-├── torch_model  
-
-└── unilm  
-
+```
+├── README.md 说明文档  
+├── common    通用方法
+├── data      评估数据和量化数据
+├── fp16      转fp16 trt 相关代码
+├── fp32      转fp32 trt 相关代码
+├── int8      转int8 trt 相关代码
+├── main.py   main
+├── plugins   插件代码
+├── prepare_data.sh  data数据生成
+├── torch_model  模型 推理代码
+└── unilm  模型相关代码
+```
 ## 模型转换前准备
 ### 1.配置文件
 根据官方说明进行配置
