@@ -246,10 +246,18 @@ $ trtexec --onnx=layout.onnx --minShapes=input_ids:1x512,bbox:1x512x4,images:1x3
 $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbose --plugins=./LayerNorm.so --fp16
 ```
 ### 此过程遇到的问题  
-（1）我们直接使用trtexec去转FP16时，发现结果的精度误差极大。（TRT的精度BUG）
+（1）我们直接使用trtexec去转FP16时，发现结果的精度误差极大。（TRT的精度BUG）  
+
 <img width="248" alt="企业微信截图_16563231808083" src="https://user-images.githubusercontent.com/53067559/175913159-17aeaa8a-3187-4067-a859-2e1f544ca792.png">
 
-### Hackathon 2022 BUG
+我们尝试使用polygrahy去找精度出问题的layer，但依然发生了之前的问题，破坏了Myelin的优化融合，失败。没有办法，只能再次使用二分法去查找。我们将layoutlmv3分为两部分，第一部分是embedding模块，第二部分是transformer模块。embedding模块的输入为input_ids,bbox,images,输出为rel_pos，rel_2d_pos和hidden_states。transformer模块的输入为rel_pos，rel_2d_pos，hidden_states和attention_mask,输出为预测的分类结果。
+  
+  经过检测，在FP16精度下，发现embedding模块的rel_pos，rel_2d_pos输出部分值为0，hidden_states输出基本符合fp16的精度误差。然后再次细分，发现只输出rel_pos，rel_2d_pos时，结果精度没问题，但是加入hidden_states分支，影响了rel_pos，rel_2d_pos输出精度。
+  
+ <img width="572" alt="8109eea10c993f5a42060d8070f27cf" src="https://user-images.githubusercontent.com/53067559/175931815-2c400d9a-a165-4c1a-b354-1af2376c88fd.png">
+
+ 
+## Hackathon 2022 BUG
 本次比赛我们总共发现了三个BUG。  
 
 issue地址（PrecisionBUG）：https://github.com/NVIDIA/TensorRT/issues/2091  
