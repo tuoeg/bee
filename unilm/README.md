@@ -1,4 +1,4 @@
-<!--# Large-scale Self-supervised Pre-training Across Tasks, Languages, and Modalities-->
+<!--# Larg-scale Self-supervised Pre-training Across Tasks, Languages, and Modalities-->
 # Hiring
 We are hiring at all levels (including FTE researchers and interns)! If you are interested in working with us on NLP and large-scale pre-trained models, please send your resume to <a href="mailto:fuwei@microsoft.com" class="x-hidden-focus">fuwei@microsoft.com</a>.
 
