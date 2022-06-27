@@ -21,6 +21,101 @@ PyTorch Version (if applicable): 1.11.0<br>
 ## 项目结构
 
 
+
+## 模型转换前准备
+### 1.配置文件
+根据官方说明进行配置
+```
+conda create --name layoutlmv3 python=3.7
+conda activate layoutlmv3
+git clone https://github.com/microsoft/unilm.git
+cd unilm/layoutlmv3
+pip install -r requirements.txt
+# install pytorch, torchvision refer to https://pytorch.org/get-started/locally/
+pip install torch==1.10.0+cu111 torchvision==0.11.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+# install detectron2 refer to https://detectron2.readthedocs.io/en/latest/tutorials/install.html
+python -m pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu111/torch1.10/index.html
+pip install -e .
+```
+### 2.数据准备
+将预处理之后的TrainData和EvalData从train_dataset和eval_dataset中提取出来。提取的TrainData用来int8量化，EvalData用来评测。
+```
+# 进入run_funsd_cord.py
+cd /unilm/layoutlmv3/examples/run_funsd_cord.py
+
+# 加入以下代码。
+# Save Eval Data
+eval_labels = np.ones((54, 709),dtype=np.int32)
+eval_input_ids = np.ones((54, 512),dtype=np.int32)
+eval_bboxes = np.zeros((54,512,4),dtype=np.int32)
+eval_images = np.ones((54,3,224,224),dtype=np.float32)
+eval_attention_masks = np.ones((54,709),dtype=np.int32)
+
+for step, eval_inputs in enumerate(eval_dataset):
+    # labels
+    eval_labels[step,:] = eval_labels[step,:]*(-100)
+    eval_labels[step, :len(eval_inputs['attention_mask'])] = np.array(eval_inputs['labels'])
+    # input_ids
+    eval_input_ids[step, :len(eval_inputs['attention_mask'])] = np.array(eval_inputs['input_ids'])
+    # bboxes
+    eval_bboxes[step, :len(eval_inputs['attention_mask']),:] = np.array(eval_inputs['bbox'])
+    # images
+    eval_images[step,:,:,:] = np.array(eval_inputs['images'])
+    # attention_masks
+    eval_attention_masks[step,len(eval_inputs['attention_mask']):512] = 0
+
+np.save('./eval_data/labels.npy', eval_labels)
+np.save('./eval_data/input_ids.npy', eval_input_ids)
+np.save('./eval_data/bbox.npy', eval_bboxes)
+np.save('./eval_data/images.npy', eval_images)
+np.save('./eval_data/attention_mask.npy', eval_attention_masks)
+
+# Save Train Data
+train_labels = np.ones((150, 709), dtype=np.int32)
+train_input_ids = np.ones((150, 512), dtype=np.int32)
+train_bboxes = np.zeros((150, 512, 4), dtype=np.int32)
+train_images = np.ones((150, 3, 224, 224), dtype=np.float32)
+train_attention_masks = np.ones((150, 709), dtype=np.int32)
+
+for step, train_inputs in enumerate(train_dataset):
+    # labels
+    train_labels[step, :] = train_labels[step, :] * (-100)
+    train_labels[step, :len(train_inputs['attention_mask'])] = np.array(train_inputs['labels'])
+    # input_ids
+    train_input_ids[step, :len(train_inputs['attention_mask'])] = np.array(train_inputs['input_ids'])
+    # bbox
+    train_bboxes[step, :len(train_inputs['attention_mask']), :] = np.array(train_inputs['bbox'])
+    # images
+    train_images[step, :, :, :] = np.array(train_inputs['images'])
+    # attention_mask
+    train_attention_masks[step, len(train_inputs['attention_mask']):512] = 0
+
+np.save('./train_data/labels.npy', train_labels)
+np.save('./train_data/input_ids.npy', train_input_ids)
+np.save('./train_data/bbox.npy', train_bboxes)
+np.save('./train_data/images.npy', train_images)
+np.save('./train_data/attention_mask.npy', train_attention_masks)
+
+cd /unilm/layoutlmv3
+
+# 运行官方提供的代码
+python -m torch.distributed.launch \
+  --nproc_per_node=8 --master_port 4398 examples/run_funsd_cord.py \
+  --dataset_name funsd \
+  --do_train --do_eval \
+  --model_name_or_path microsoft/layoutlmv3-base \
+  --output_dir /path/to/layoutlmv3-base-finetuned-funsd \
+  --segment_level_layout 1 --visual_embed 1 --input_size 224 \
+  --max_steps 1000 --save_steps -1 --evaluation_strategy steps --eval_steps 100 \
+  --learning_rate 1e-5 --per_device_train_batch_size 2 --gradient_accumulation_steps 1 \
+  --dataloader_num_workers 8
+```
+### 3.源码改动
+由于onnx无法像torch一样指定输入，因此需要将LayoutLMv3ForTokenClassification类中的forward函数入参进行顺序修改。如下图。
+
+<img width="142" alt="企业微信截图_16563149198677" src="https://user-images.githubusercontent.com/53067559/175883908-589f9128-4c5f-498a-8247-57ce2b4a736d.png"><img width="144" alt="企业微信截图_16563149041965" src="https://user-images.githubusercontent.com/53067559/175883883-a38ee67f-2ed3-4a15-9009-661a6c3979d7.png">
+
+
 ## 模型转换以及优化
 ### 1.torch to onnx
 
@@ -115,8 +210,9 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 
 最后成功解决这个精度问题。
 
+### 此过程的优化  
 
-
+使用Nsight，发现
 
 
 ### Hackathon 2022 BUG
