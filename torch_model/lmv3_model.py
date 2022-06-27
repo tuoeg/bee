@@ -5,6 +5,7 @@ from transformers import (
     AutoModelForTokenClassification,
     AutoTokenizer
 )
+
 import layoutlmft.data.funsd
 from datasets import load_dataset
 import sys
