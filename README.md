@@ -28,25 +28,28 @@ PyTorch Version (if applicable): 1.11.0<br>
 $ python3 torch2onnx.py -h
 ```
 
-遇到的问题      
+此过程遇到的问题      
 
-（1）opt_version=9不支持，使用opset_version=11
+（1）opt_version=9不支持。因此我们将opset_version设为11。
 
 ![image](https://user-images.githubusercontent.com/49616374/174259578-b0606449-3a40-4171-aa32-d2dab8549a93.png)
 
-（2）optset_version 11不支持amax操作，修改torch网络中amax函数为max函数
+（2）optset_version 11不支持amax操作。因此我们修改torch网络中amax函数为max函数
 
 ![image](https://user-images.githubusercontent.com/49616374/174259606-c2d4ea64-4125-42cf-82b8-657e660c54ed.png)
+
+（3）onehot算子不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
+
+![image](https://user-images.githubusercontent.com/49616374/174260371-2d1e6093-3a0f-4808-a76d-9380f6654b7f.png)
+
+（4）添加cast进行数据类型转换
+
+![image](https://user-images.githubusercontent.com/49616374/174260502-3a511afc-2b91-49f4-adc2-92b607f2ec43.png)
+
 ### 2.LayerNorm算子优化
 ## 遇到的问题
 ### 1.opt_version版本
-（1）opt_version=9不支持，使用opset_version=11
 
-![image](https://user-images.githubusercontent.com/49616374/174259578-b0606449-3a40-4171-aa32-d2dab8549a93.png)
-
-（2）optset_version 11不支持amax操作，修改torch网络中amax函数为max函数
-
-![image](https://user-images.githubusercontent.com/49616374/174259606-c2d4ea64-4125-42cf-82b8-657e660c54ed.png)
 
 ### 2.算子转换
 （1）onehot算子不支持，根据onehot算子原理将onehot+cast+matmul算子合并成gather算子
