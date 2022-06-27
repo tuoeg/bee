@@ -1,3 +1,4 @@
+
 CUDA_PATH       = /usr/local/cuda
 TRT_PATH        = /usr/local/TensorRT-8.4.1.4
 NVCC            = $(CUDA_PATH)/bin/nvcc
