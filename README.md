@@ -25,6 +25,10 @@ PyTorch Version (if applicable): 1.11.0<br>
 ### 1.torch to onnx
 
 ```
+# 动态
+$ python3 torch2onnx.py -h
+
+# 静态
 $ python3 torch2onnx.py -h
 ```
 
@@ -58,6 +62,13 @@ $ python3 torch2onnx.py -h
 ![image](https://user-images.githubusercontent.com/49616374/174260371-2d1e6093-3a0f-4808-a76d-9380f6654b7f.png)
 <img width="130" alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/53067559/175856736-2cbc4e4c-1033-4283-83c8-6e247b22b38b.png"><img width="99" alt="企业微信截图_16563018741884" src="https://user-images.githubusercontent.com/53067559/175856737-8c0f6787-4472-4e01-b169-be63379ee9f5.png">
 
+simplify方法  
+
+```
+# 静态
+$ python3 -m onnxsim layoutv3.onnx layoutv3_sim.onnx
+```
+我们使用Nsight发现TRT自处理后的结构比和使用onnxsim后的结构好，因此未使用onnxsim。
 
 ### 2.LayerNorm算子优化
 ## 遇到的问题
