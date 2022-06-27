@@ -140,8 +140,9 @@ $ python3 torch2onnx.py -h
 ### 此过程遇到的问题      
 
 （1）opt_version=9不支持。
-
+<div align="center">
 ![image](https://user-images.githubusercontent.com/49616374/174259578-b0606449-3a40-4171-aa32-d2dab8549a93.png)
+</div>
 
 我们将opset_version设为11跳过了这个问题。
 
@@ -224,9 +225,9 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 
 
 （2）出现精度误差。  
-
+<div align="center">
 ![image](https://user-images.githubusercontent.com/49616374/174260801-f0c100b5-84db-4bc2-916a-dfa2ca21e481.png)
-
+</div>
 
 转换后的TRT模型精度出现较大误差，但是在之前生成的ONNX模型上是符合e-5的误差的。我们先使用了polygrahy工具尝试查找精度出问题的layer。
 ```
@@ -238,9 +239,9 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 
 因此我们使用二分法排查精度出问题的layer。经过一段时间的努力，使用了onnx_graphsurgeon定位并裁剪出了有问题的小型网络并生成trt网络。  
 
-
-<img height="450px" src="https://user-images.githubusercontent.com/53067559/175875678-bffd11e4-477f-4265-a487-ca0a1dbb256c.png" />
-
+<div align="center">
+    <img height="450px" src="https://user-images.githubusercontent.com/53067559/175875678-bffd11e4-477f-4265-a487-ca0a1dbb256c.png" />
+</div>
 
 如上图，我们发现经过cast算子之前的输出roi精度符合要求，但是经过cast算子之后的输出out精度发生较大的误差。我们将cast之前的输出roi打印出来，发现是float转int发生的误差。  
 
@@ -248,9 +249,10 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 
 由于，round算子是不能指定位数的，所以最直接的方法就是需要实现一个可指定位数的round插件，但是这样需要花费我们一些时间。最后老师给了一个建议，提出将cast之前的输出乘1e5，再使用round，最后除以1e5还原。我们添加了Mul,Round,Div三个算子，TRT的结果与Torch结果的误差在e-5。ONNX部分如下图所示。  
 
-
-<img height="450px" src="https://user-images.githubusercontent.com/53067559/175878044-35a5b911-3bec-4919-a7bb-890601d77e4b.png" />
-
+<div align="center">
+    <img height="450px" src="https://user-images.githubusercontent.com/53067559/175878044-35a5b911-3bec-4919-a7bb-890601d77e4b.png" />
+</div>
+    
 ### 此过程的优化  
 
 使用Nsight，发现
