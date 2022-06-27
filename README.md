@@ -309,79 +309,79 @@ $ python3 onnx2TRT.py
         <tr>
             <td rowspan="4">PyTorch</td>
             <td>1</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>69</td>
+            <td>14.4</td>
+            <td>x1</td>
         </tr>
         <tr>
             <td>2</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>124</td>
+            <td>16.12</td>
+            <td>x1</td>
         </tr>
         <tr>
             <td>4</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>248</td>
+            <td>16.12</td>
+            <td>x1</td>
         </tr>
         <tr>
             <td>8</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>481</td>
+            <td>16.63</td>
+            <td>x1</td>
         </tr>
         <!-- TensorRT -->
         <tr>
             <td rowspan="4">TensorRT(FP32)</td>
             <td>1</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>57</td>
+            <td>17.54</td>
+            <td>x1.2</td>
         </tr>
         <tr>
             <td>2</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>106</td>
+            <td>18.86</td>
+            <td>x1.17</td>
         </tr>
         <tr>
             <td>4</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>196</td>
+            <td>20.04</td>
+            <td>x1.26</td>
         </tr>
         <tr>
             <td>8</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>407</td>
+            <td>19.65</td>
+            <td>x1.19</td>
         </tr>
         <!-- TensorRT(FP16) -->
         <tr>
             <td rowspan="4">TensorRT(FP16)</td>
             <td>1</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>54</td>
+            <td>18.5</td>
+            <td>x1.28</td>
         </tr>
         <tr>
             <td>2</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>95</td>
+            <td>21.05</td>
+            <td>x1.3</td>
         </tr>
         <tr>
             <td>4</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>137</td>
+            <td>29.19</td>
+            <td>x1.81</td>
         </tr>
         <tr>
             <td>8</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>357</td>
+            <td>22.4</td>
+            <td>x1.34</td>
         </tr>
     </tbody>
 </table>
