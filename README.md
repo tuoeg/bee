@@ -18,6 +18,8 @@
 **Python Version (if applicable):** 3.8.10<br>
 **PyTorch Version (if applicable):** 1.11.0<br>
 
+## 项目结构
+
 ## 模型转换前准备
 ### 1.配置文件
 根据官方说明进行配置
@@ -360,15 +362,13 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 </table>
 
 
-同时选择正确的kernel,将transpose退回FP32精度,得出的结果与fp32一致。这验证了我们的想法，融合节点的tactic选择了最快的一个，但是精度有问题。
-
-接下来，我们开始考虑时间的问题，embedding模块在batchsize为6，推100次的情况下。如果替换gather可以得到fp32精度，破坏了节点融合，时间会到1s；如果只选择tactic，时间会到0.46s，但是考虑到e-3的误差在经过transformer模块之后肯定会更低。因此我们尝试了fp32下，时间为0.51s，加上两个layernorm插件加速之后达到了0.48s。综合考虑下，我们决定牺牲0.2ms的时间换取fp32精度。在老师询问到能够分两个模型进行部署时，我们决定将embedding模块转fp32，transformer模块转fp16。
+同时选择正确的kernel,将transpose退回FP32精度,得出的结果与fp32一致。这验证了我们的想法，融合节点的tactic选择了最快的一个，但是精度有问题。因此我们在fp16时，选择了相应的tactic并达到较好的指标。
 
 ### 3.ONNX2TensorRT（INT8）
 ```
 $ python3 onnx2TRT.py
 ```
-当我们直接将整个模型进行int8量化后，精度误差到e-1，达不到工业部署的要求。我们再次将模型拆分成embedding和transformer两个部分，发现embedding校准之后效果是可以的，但是transformer模块是不行的。  
+当我们直接将整个模型进行int8量化后，精度误差到e-1，达不到工业部署的要求。我们再次将模型拆分成embedding和transformer两个部分，发现embedding校准之后效果是可以的，但是transformer模块是不行的。因此，可以采取int8和fp16混合精度优化，但由于时间关系，最后未能完成。
 
 ## 精度与加速效果  
 为了靠近实际场景，我们设置最小batch为1，最优为4，最大为8的情况下进行评测。
@@ -436,32 +436,6 @@ $ python3 onnx2TRT.py
         <!-- TensorRT(FP16) -->
         <tr>
             <td rowspan="4">TensorRT(FP16)</td>
-            <td>1</td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>8</td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <!-- INT8 -->
-        <tr>
-            <td rowspan="4">INT8</td>
             <td>1</td>
             <td></td>
             <td></td>
