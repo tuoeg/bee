@@ -348,10 +348,12 @@ $ python3 onnx2TRT.py
         <td>1</td>
         <td></td>
         <td></td>
+        <td></td>
     <tr>
     <tr>
         <td></td>
         <td>2</td>
+        <td></td>
         <td></td>
         <td></td>
     <tr>
@@ -360,10 +362,12 @@ $ python3 onnx2TRT.py
         <td>4</td>
         <td></td>
         <td></td>
+        <td></td>
     <tr>
     <tr>
         <td></td>
         <td>8</td>
+        <td></td>
         <td></td>
         <td></td>
     <tr>
