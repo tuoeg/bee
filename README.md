@@ -141,22 +141,27 @@ $ python3 torch2onnx.py -h
 
 （1）opt_version=9不支持。
 <div align="center">
-![image](https://user-images.githubusercontent.com/49616374/174259578-b0606449-3a40-4171-aa32-d2dab8549a93.png)
+    <img alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/49616374/174259578-b0606449-3a40-4171-aa32-d2dab8549a93.png" >
 </div>
 
 我们将opset_version设为11跳过了这个问题。
 
 （2）optset_version 11不支持amax操作。
-
-![image](https://user-images.githubusercontent.com/49616374/174259606-c2d4ea64-4125-42cf-82b8-657e660c54ed.png)
+<div align="center">
+    <img alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/49616374/174259606-c2d4ea64-4125-42cf-82b8-657e660c54ed.png" >
+</div>
 
 我们修改torch网络中amax函数为max函数，跳过了这个问题。
 
-![image](https://user-images.githubusercontent.com/53067559/175852416-f750cd2c-d357-485a-919c-86d640eb56f0.png)
+<div align="center">
+    <img alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/53067559/175852416-f750cd2c-d357-485a-919c-86d640eb56f0.png" >
+</div>
 
 （3）一些算子不支持多种类型进行操作，或者不支持int类型进行操作。
 
-![image](https://user-images.githubusercontent.com/49616374/174260502-3a511afc-2b91-49f4-adc2-92b607f2ec43.png)
+<div align="center">
+    <img alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/49616374/174260502-3a511afc-2b91-49f4-adc2-92b607f2ec43.png" >
+</div>
 
 我们加入cast节点进行类型转换和修改节点内部数据类型。下图为其中一个修改点。
 
@@ -204,9 +209,11 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 ### 此过程遇到的问题  
 （1）onehot算子不支持。
 
-![image](https://user-images.githubusercontent.com/49616374/174260371-2d1e6093-3a0f-4808-a76d-9380f6654b7f.png)
+<div align="center">
+    <img alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/49616374/174260371-2d1e6093-3a0f-4808-a76d-9380f6654b7f.png" >
+</div>
   
-  我们根据源码和算子里面的数据判断onehot算子加上后面的matmul算子就是nn.embedding的结构。因此我们将onehot+cast+matmul算子合并成nn.embedding转成的gather算子。如下图。
+我们根据源码和算子里面的数据判断onehot算子加上后面的matmul算子就是nn.embedding的结构。因此我们将onehot+cast+matmul算子合并成nn.embedding转成的gather算子。如下图。
 
 <table width="100%" align="center">
     <tr>
@@ -225,8 +232,9 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 
 
 （2）出现精度误差。  
+
 <div align="center">
-![image](https://user-images.githubusercontent.com/49616374/174260801-f0c100b5-84db-4bc2-916a-dfa2ca21e481.png)
+    <img alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/49616374/174260801-f0c100b5-84db-4bc2-916a-dfa2ca21e481.png" >
 </div>
 
 转换后的TRT模型精度出现较大误差，但是在之前生成的ONNX模型上是符合e-5的误差的。我们先使用了polygrahy工具尝试查找精度出问题的layer。
@@ -235,7 +243,9 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 ```
 出现了如下图的问题，老师解释貌似是每层加输出会破坏Myelin的优化融合。  
 
-![image](https://user-images.githubusercontent.com/53067559/175874907-d65fb57c-b868-4c3f-b282-e7d0c7286027.png)
+<div align="center">
+    <img alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/53067559/175874907-d65fb57c-b868-4c3f-b282-e7d0c7286027.png" >
+</div>
 
 因此我们使用二分法排查精度出问题的layer。经过一段时间的努力，使用了onnx_graphsurgeon定位并裁剪出了有问题的小型网络并生成trt网络。  
 
@@ -245,7 +255,9 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 
 如上图，我们发现经过cast算子之前的输出roi精度符合要求，但是经过cast算子之后的输出out精度发生较大的误差。我们将cast之前的输出roi打印出来，发现是float转int发生的误差。  
 
-![image](https://user-images.githubusercontent.com/49616374/174262579-f7b5157d-ab4c-4d00-af7a-8d568ee69582.png)
+<div align="center">
+    <img height="450px" src="https://user-images.githubusercontent.com/49616374/174262579-f7b5157d-ab4c-4d00-af7a-8d568ee69582.png" />
+</div>
 
 由于，round算子是不能指定位数的，所以最直接的方法就是需要实现一个可指定位数的round插件，但是这样需要花费我们一些时间。最后老师给了一个建议，提出将cast之前的输出乘1e5，再使用round，最后除以1e5还原。我们添加了Mul,Round,Div三个算子，TRT的结果与Torch结果的误差在e-5。ONNX部分如下图所示。  
 
@@ -279,15 +291,18 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 ### 此过程遇到的问题  
 （1）我们直接使用trtexec去转FP16时，发现结果的精度误差极大。（TRT的精度BUG）  
 
-![image](https://user-images.githubusercontent.com/53067559/175913159-17aeaa8a-3187-4067-a859-2e1f544ca792.png)
+<div align="center">
+    <img src="https://user-images.githubusercontent.com/53067559/175913159-17aeaa8a-3187-4067-a859-2e1f544ca792.png" />
+</div>
 
 
 我们尝试使用polygrahy去找精度出问题的layer，但依然发生了之前的问题，破坏了Myelin的优化融合，失败。没有办法，只能再次使用二分法去查找。我们将layoutlmv3分为两部分，第一部分是embedding模块，第二部分是transformer模块。embedding模块的输入为input_ids,bbox,images,输出为rel_pos，rel_2d_pos和hidden_states。transformer模块的输入为rel_pos，rel_2d_pos，hidden_states和attention_mask,输出为预测的分类结果。
   
   经过检测，在FP16精度下，发现embedding模块的rel_pos，rel_2d_pos输出部分值为0，hidden_states输出基本符合fp16的精度误差。然后再次细分，发现只输出rel_pos，rel_2d_pos时，结果精度没问题，但是加入hidden_states分支，影响了rel_pos，rel_2d_pos输出精度。再对hidden_states分支进行层层拆分，最后定位成以下问题：
-  
-![image](https://user-images.githubusercontent.com/53067559/175931815-2c400d9a-a165-4c1a-b354-1af2376c88fd.png)
 
+<div align="center">
+    <img src="https://user-images.githubusercontent.com/53067559/175931815-2c400d9a-a165-4c1a-b354-1af2376c88fd.png" />
+</div>
 
  阻断融合，我们尝试了回退两个分支的连接点ADD算子的精度为fp32，修改不成功（TRT的设置BUG），失败；尝试了添加输出层，还是失败，无法阻断融合；最后只能写了两个Matmul算子让两个分支的输出乘以对角为1的矩阵，这次终于将ADD拆分出来，但是两个分支依旧融合成一个外部节点，还是失败了。
  
@@ -305,9 +320,10 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
     algorithm:[implementation:2147483683,tactic:0,timing:0.000000ms,workspace:0MB]
  ```
  没错，恭喜你猜对了！确实是kernel选择的问题，我们将这个节点的tactic打印出来，发现有**三**个。
- 
-![image](https://user-images.githubusercontent.com/53067559/175952213-37da4d70-58e7-4cf9-abe7-9bd344421cde.png)
 
+<div align="center">
+    <img src="https://user-images.githubusercontent.com/53067559/175952213-37da4d70-58e7-4cf9-abe7-9bd344421cde.png" />
+</div>
 
  我们实验发现有一个kernel结果是错误的，还有一个kernel的误差精度是在e-3左右。应该是最后的transpose为fp16的精度导致的误差。同时，我们察觉到这可能是水平结构的融合，同时观察到有很多gather算子，进一步确认应该是gather算子的水平融合。于是我们编写了一个gather算子的plugin，替换掉rel_pos，rel_2d_pos分支的gather算子，下图是rel_pos分支的gather算子。
 
