@@ -242,7 +242,8 @@ $ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbo
 <img width="248" alt="企业微信截图_16563231808083" src="https://user-images.githubusercontent.com/53067559/175913159-17aeaa8a-3187-4067-a859-2e1f544ca792.png">
 
 ### Hackathon 2022 BUG
-本次比赛我们总共发现了三个BUG。
+本次比赛我们总共发现了三个BUG。  
+
 issue地址（PrecisionBUG）：https://github.com/NVIDIA/TensorRT/issues/2091  
 
 issue地址（MessageBUG）：https://github.com/NVIDIA/TensorRT/issues/2073  
