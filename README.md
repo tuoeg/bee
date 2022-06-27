@@ -105,12 +105,19 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 
 <img width="101" alt="33afa27485683114094fafa16381c2b" src="https://user-images.githubusercontent.com/53067559/175875678-bffd11e4-477f-4265-a487-ca0a1dbb256c.png">  
 
-如上图，我们发现输出roi的精度符合要求，但是经过cast算子之后的out发生较大的误差。我们将两个输出打印出来，发现是float转int发生的误差。  
-
-![image](https://user-images.githubusercontent.com/49616374/174260801-f0c100b5-84db-4bc2-916a-dfa2ca21e481.png)<br>
-（2）cast算子在计算float32数据时存在误差，通过round()放缩，规避误差<br>
+如上图，我们发现经过cast算子之前的输出roi精度符合要求，但是经过cast算子之后的输出out精度发生较大的误差。我们将cast之前的输出roi打印出来，发现是float转int发生的误差。  
 
 ![image](https://user-images.githubusercontent.com/49616374/174262579-f7b5157d-ab4c-4d00-af7a-8d568ee69582.png)
+
+由于，round算子是不能指定位数的，所以最直接的方法就是需要实现一个可指定位数的round插件，但是这样需要花费我们一些时间。最后老师给了一个建议，提出将cast之前的输出乘1e5，再使用round，最后除以1e5还原。ONNX如下图。  
+
+<img width="152" alt="企业微信截图_16563128136069" src="https://user-images.githubusercontent.com/53067559/175877756-c415a380-9985-4ec5-992c-190c5dafb909.png">  
+
+最后成功解决这个精度问题。
+
+
+
+
 
 ### Hackathon 2022 BUG
 issue地址：https://github.com/NVIDIA/TensorRT/issues/2063
