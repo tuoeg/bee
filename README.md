@@ -268,6 +268,11 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 ### 此过程的优化  
 
 使用Nsight，发现
+<div align="center">
+    <img height="450px" src="[https://user-images.githubusercontent.com/53067559/175878044-35a5b911-3bec-4919-a7bb-890601d77e4b.png](https://user-images.githubusercontent.com/53067559/176002920-cc4d1424-308c-4d22-a52e-c3a6fc2fed75.png)" />
+</div>
+
+
 <table width="100%" align="center">
     <tr>
         <th align="center">BEFORE</th>
