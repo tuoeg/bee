@@ -226,6 +226,19 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 
 使用Nsight，发现
 
+### 2.ONNX2TensorRT（FP16）
+使用trtexec
+```
+# 动态
+$ trtexec --onnx=layout.onnx --minShapes=input_ids:1x512,bbox:1x512x4,images:1x3x224x224 --optShapes=input_ids:6x512,bbox:6x512x4,images:6x3x224x224 --maxShapes=input_ids:6x512,bbox:6x512x4,images:6x3x224x224 --workspace=300000 --saveEngine=layout.plan --verbose --fp16 --plugins=./LayerNorm.so
+
+
+# 静态
+$ trtexec --onnx=layout.onnx --workspace=300000 --saveEngine=layout.plan --verbose --plugins=./LayerNorm.so --fp16
+```
+这样转出来的engine精度误差极大
+### 此过程遇到的问题  
+（1）onehot算子不支持。
 
 ### Hackathon 2022 BUG
 issue地址：https://github.com/NVIDIA/TensorRT/issues/2063
