@@ -24,8 +24,9 @@ PyTorch Version (if applicable): 1.11.0<br>
 ## 模型转换以及优化
 ### 1.torch to onnx
 
+```
 $ python3 detr_pth2onnx.py -h
-
+```
 ### 2.LayerNorm算子优化
 ## 遇到的问题
 ### 1.opt_version版本
