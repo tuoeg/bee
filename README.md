@@ -159,7 +159,7 @@ $ python3 torch2onnx.py -h
 
 我们加入cast节点进行类型转换和修改节点内部数据类型。下图为其中一个修改点。
 
-<table style="display: table !important; width:100% !important;">
+<table>
     <tbody>
         <tr>
             <th align="center">BEFORE</th>
@@ -167,10 +167,10 @@ $ python3 torch2onnx.py -h
         </tr>
         <tr style="text-align: center;">
             <td>
-                <img height="300px" alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/53067559/175861628-a1186389-0ac6-416f-98a2-44efa4862df9.png" style="max-width: 100%;">
+                <img height="300px" alt="企业微信截图_1656301766905" src="https://user-images.githubusercontent.com/53067559/175861628-a1186389-0ac6-416f-98a2-44efa4862df9.png" >
             </td>
             <td>
-                <img height="300px" alt="企业微信截图_16563018741884" src="https://user-images.githubusercontent.com/53067559/175861708-19ad1dcf-d09f-43a3-bee6-0d8c7ea8d1fc.png" style="max-width: 100%;">
+                <img height="300px" alt="企业微信截图_16563018741884" src="https://user-images.githubusercontent.com/53067559/175861708-19ad1dcf-d09f-43a3-bee6-0d8c7ea8d1fc.png" >
             </td>
         </tr>
     </tbody>
@@ -238,9 +238,8 @@ polygraphy run layout.onnx --trt --onnxrt --onnx-outputs mark all --trt-outputs 
 
 因此我们使用二分法排查精度出问题的layer。经过一段时间的努力，使用了onnx_graphsurgeon定位并裁剪出了有问题的小型网络并生成trt网络。  
 
-<div style="text-align: center;">
-    <img src="https://user-images.githubusercontent.com/53067559/175875678-bffd11e4-477f-4265-a487-ca0a1dbb256c.png" />
-</div>
+
+<img height="450px" src="https://user-images.githubusercontent.com/53067559/175875678-bffd11e4-477f-4265-a487-ca0a1dbb256c.png" />
 
 
 如上图，我们发现经过cast算子之前的输出roi精度符合要求，但是经过cast算子之后的输出out精度发生较大的误差。我们将cast之前的输出roi打印出来，发现是float转int发生的误差。  
